@@ -1,5 +1,6 @@
 import os
 import requests
+import csv
 
 def fetch_auction_metrics():
     # Get the authorization key from the environment variable
@@ -72,9 +73,20 @@ def fetch_validators(last_era_id):
 
             page += 1
 
-        # Output the validators list as a numbered list
-        for index, validator in enumerate(validators, start=1):
-            print(f"{index}. {validator}")
+        # Output the validators list as a CSV file
+        csv_file_name = f"era_{last_era_id}_validators.csv"
+        with open(csv_file_name, mode="w", newline="", encoding="utf-8") as csv_file:
+            csv_writer = csv.writer(csv_file)
+
+            # Write the header row
+            if validators:
+                csv_writer.writerow(validators[0].keys())
+
+            # Write each validator as a row
+            for validator in validators:
+                csv_writer.writerow(validator.values())
+
+        print(f"Validators data saved to {csv_file_name}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching validators: {e}")
