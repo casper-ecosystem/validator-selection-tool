@@ -72,7 +72,10 @@ def fetch_validator_performance(public_key, eras, auth_key):
 
 def filter_out_validators(validators):
     print("Filtering out ineligible validators...")
-    eligible_validators = [v for v in validators if v.get("is_3_months_old", False)]
+    eligible_validators = [
+        v for v in validators 
+        if v.get("is_3_months_old", False) and v.get("average_performance", 0) >= 98.0
+    ]
     print(f"Filtered out {len(validators) - len(eligible_validators)} ineligible validators.")
     return eligible_validators
 
