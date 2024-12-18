@@ -1,6 +1,7 @@
 import os
 import requests
 import csv
+import time
 
 def fetch_auction_metrics():
     # Get the authorization key from the environment variable
@@ -102,7 +103,8 @@ def fetch_validators(last_era_id):
 
             # Parse the JSON response
             data = response.json()
-            for validator in data.get("data", []):
+            print(f"Processing page {page} of validators...")
+            for idx, validator in enumerate(data.get("data", []), start=1):
                 account_info = validator.get("account_info")
                 validator["account_info_url"] = account_info.get("url", "") if account_info else ""
                 validator["account_info_active"] = account_info.get("is_active", False) if account_info else False
@@ -116,6 +118,8 @@ def fetch_validators(last_era_id):
                 validator["is_3_months_old"] = is_3_months_old
 
                 validators.append(validator)
+                if idx % 10 == 0:
+                    print(f"Processed {idx} validators on page {page}...")
 
             # Check if there are more pages
             if page >= data.get("page_count", 0):
@@ -125,6 +129,7 @@ def fetch_validators(last_era_id):
 
         # Output the validators list as a CSV file
         csv_file_name = f"era_{last_era_id}_validators.csv"
+        print("Saving validators to CSV...")
         with open(csv_file_name, mode="w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
 
