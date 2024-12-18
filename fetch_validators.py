@@ -19,6 +19,7 @@ def fetch_auction_metrics():
     }
 
     try:
+        print("Fetching auction metrics...")
         # Make the GET request
         response = requests.get(url, headers=headers)
 
@@ -27,6 +28,9 @@ def fetch_auction_metrics():
 
         # Parse the JSON response
         data = response.json().get("data", {})
+        print("Auction metrics fetched successfully:")
+        for key, value in data.items():
+            print(f"  {key}: {value}")
         return data
 
     except requests.exceptions.RequestException as e:
