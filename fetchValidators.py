@@ -55,7 +55,8 @@ def fetch_validators(last_era_id):
     try:
         while True:
             # Add pagination to the request
-            url = f"{base_url}?era_id={last_era_id}&page={page}"
+            includes_param = "account_info{url,is_active}"
+            url = f"{base_url}?era_id={last_era_id}&page={page}&includes={includes_param}"
 
             # Make the GET request
             response = requests.get(url, headers=headers)
@@ -65,7 +66,11 @@ def fetch_validators(last_era_id):
 
             # Parse the JSON response
             data = response.json()
-            validators.extend(data.get("data", []))
+            for validator in data.get("data", []):
+                account_info = validator.get("account_info")
+                validator["account_info_url"] = account_info.get("url", "") if account_info else ""
+                validator["account_info_active"] = account_info.get("is_active", False) if account_info else False
+                validators.append(validator)
 
             # Check if there are more pages
             if page >= data.get("page_count", 0):
