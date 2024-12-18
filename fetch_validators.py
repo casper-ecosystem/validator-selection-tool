@@ -74,7 +74,9 @@ def filter_out_validators(validators):
     print("Filtering out ineligible validators...")
     eligible_validators = [
         v for v in validators 
-        if v.get("is_3_months_old", False) and v.get("average_performance", 0) >= 98.0
+        if v.get("is_3_months_old", False) 
+        and v.get("average_performance", 0) >= 98.0
+        and v.get("account_info_active", False)
     ]
     print(f"Filtered out {len(validators) - len(eligible_validators)} ineligible validators.")
     return eligible_validators
