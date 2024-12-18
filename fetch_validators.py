@@ -59,7 +59,7 @@ def fetch_validators(last_era_id):
     try:
         while True:
             # Add pagination to the request
-            includes_param = "account_info{url,is_active}"
+            includes_param = "account_info{url,is_active},average_performance"
             url = f"{base_url}?era_id={last_era_id}&page={page}&includes={includes_param}"
 
             # Make the GET request
@@ -74,6 +74,8 @@ def fetch_validators(last_era_id):
                 account_info = validator.get("account_info")
                 validator["account_info_url"] = account_info.get("url", "") if account_info else ""
                 validator["account_info_active"] = account_info.get("is_active", False) if account_info else False
+                average_performance = validator.get("average_performance")
+                validator["average_performance"] = round(average_performance.get("score", 0.0), 1) if average_performance else 0
                 validators.append(validator)
 
             # Check if there are more pages
