@@ -70,6 +70,12 @@ def fetch_validator_performance(public_key, eras, auth_key):
 
     return performances
 
+def filter_out_validators(validators):
+    print("Filtering out ineligible validators...")
+    eligible_validators = [v for v in validators if v.get("is_3_months_old", False)]
+    print(f"Filtered out {len(validators) - len(eligible_validators)} ineligible validators.")
+    return eligible_validators
+
 def fetch_validators(last_era_id):
     # Get the authorization key from the environment variable
     auth_key = os.getenv("CSPR_CLOUD_KEY")
@@ -142,6 +148,23 @@ def fetch_validators(last_era_id):
                 csv_writer.writerow(validator.values())
 
         print(f"Validators data saved to {csv_file_name}")
+
+        # Filter out ineligible validators and save to a new CSV file
+        eligible_validators = filter_out_validators(validators)
+        eligible_csv_file_name = f"era_{last_era_id}_delegation_candidates.csv"
+        print("Saving eligible validators to CSV...")
+        with open(eligible_csv_file_name, mode="w", newline="", encoding="utf-8") as csv_file:
+            csv_writer = csv.writer(csv_file)
+
+            # Write the header row
+            if eligible_validators:
+                csv_writer.writerow(eligible_validators[0].keys())
+
+            # Write each eligible validator as a row
+            for validator in eligible_validators:
+                csv_writer.writerow(validator.values())
+
+        print(f"Eligible validators data saved to {eligible_csv_file_name}")
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching validators: {e}")
