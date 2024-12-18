@@ -37,6 +37,38 @@ def fetch_auction_metrics():
         print(f"Error fetching auction metrics: {e}")
         return None
 
+def fetch_validator_performance(public_key, eras, auth_key):
+    # API endpoint for validator performance
+    base_url = f"https://api.cspr.cloud/validators/{public_key}/relative-performances"
+
+    # Headers
+    headers = {
+        "accept": "application/json",
+        "authorization": auth_key,
+    }
+
+    performances = {}
+    try:
+        # Construct the query for eras
+        era_param = ",".join(map(str, eras))
+        url = f"{base_url}?era_id={era_param}&page=1"
+
+        # Make the GET request
+        response = requests.get(url, headers=headers)
+
+        # Raise an HTTPError if the response was unsuccessful
+        response.raise_for_status()
+
+        # Parse the JSON response
+        data = response.json().get("data", [])
+        for entry in data:
+            performances[entry["era_id"]] = entry["score"]
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching validator performance for {public_key}: {e}")
+
+    return performances
+
 def fetch_validators(last_era_id):
     # Get the authorization key from the environment variable
     auth_key = os.getenv("CSPR_CLOUD_KEY")
@@ -76,6 +108,13 @@ def fetch_validators(last_era_id):
                 validator["account_info_active"] = account_info.get("is_active", False) if account_info else False
                 average_performance = validator.get("average_performance")
                 validator["average_performance"] = round(average_performance.get("score", 0.0), 1) if average_performance else 0
+
+                # Check performances for specific eras
+                eras_to_check = [last_era_id - 360, last_era_id - 720, last_era_id - 1080]
+                performances = fetch_validator_performance(validator["public_key"], eras_to_check, auth_key)
+                is_3_months_old = all(performances.get(era, 0) > 0 for era in eras_to_check)
+                validator["is_3_months_old"] = is_3_months_old
+
                 validators.append(validator)
 
             # Check if there are more pages
