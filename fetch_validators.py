@@ -70,11 +70,7 @@ def fetch_validator_performance(public_key, eras, auth_key):
 
     return performances
 
-def check_voting_participation(public_key, auth_key):
-    contract_package_hash = "f64d28df7fc354af183829bad6006525f88d37f0d982ba6125d58ddfa521e0fa"
-    start_block = 3798134
-    end_block = 3808400
-
+def check_voting_participation(public_key, auth_key, contract_package_hash, start_block, end_block):
     # API endpoint for account fungible token actions
     base_url = f"https://api.cspr.cloud/accounts/{public_key}/ft-token-actions"
 
@@ -165,9 +161,19 @@ def fetch_validators(last_era_id):
                 is_3_months_old = all(performances.get(era, 0) > 0 for era in eras_to_check)
                 validator["is_3_months_old"] = is_3_months_old
 
-                # Check voting participation
-                participation = check_voting_participation(validator["public_key"], auth_key)
-                validator["voting_participation"] = participation
+                # Check voting participation for the two votes
+                participation_001 = check_voting_participation(
+                    validator["public_key"], auth_key,
+                    "f64d28df7fc354af183829bad6006525f88d37f0d982ba6125d58ddfa521e0fa",
+                    3798134, 3808400
+                )
+                participation_002 = check_voting_participation(
+                    validator["public_key"], auth_key,
+                    "5743998e54844ae3587bf1c80c83695a767ab568f149be87db15216b57a20831",
+                    3991820, 4012820
+                )
+                validator["voting_participation_001"] = participation_001
+                validator["voting_participation_002"] = participation_002
 
                 validators.append(validator)
                 if idx % 10 == 0:
@@ -182,6 +188,7 @@ def fetch_validators(last_era_id):
         # Output the validators list as a CSV file
         csv_file_name = f"era_{last_era_id}_validators.csv"
         print("Saving validators to CSV...")
+
         with open(csv_file_name, mode="w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
 
