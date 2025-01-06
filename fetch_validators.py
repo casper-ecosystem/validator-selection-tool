@@ -178,6 +178,7 @@ def fetch_validators(last_era_id):
                 validator["is_3_months_old"] = is_3_months_old
 
                 # Check voting participation for each vote
+                total_participation = 0
                 for vote in voting_details:
                     participation = check_voting_participation(
                         validator["public_key"], auth_key,
@@ -185,6 +186,10 @@ def fetch_validators(last_era_id):
                         vote["start_block"], vote["end_block"]
                     )
                     validator[vote["column_name"]] = participation
+                    total_participation += participation
+
+                # Calculate onchain voting participation as average
+                validator["onchain_voting_participation"] = round(total_participation / len(voting_details), 2)
 
                 validators.append(validator)
                 if idx % 10 == 0:
