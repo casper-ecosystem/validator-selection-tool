@@ -70,6 +70,40 @@ def fetch_validator_performance(public_key, eras, auth_key):
 
     return performances
 
+def check_voting_participation(public_key, auth_key):
+    contract_package_hash = "f64d28df7fc354af183829bad6006525f88d37f0d982ba6125d58ddfa521e0fa"
+    start_block = 3798134
+    end_block = 3808400
+
+    # API endpoint for account fungible token actions
+    base_url = f"https://api.cspr.cloud/accounts/{public_key}/ft-token-actions"
+
+    # Headers
+    headers = {
+        "accept": "application/json",
+        "authorization": auth_key,
+    }
+
+    try:
+        url = f"{base_url}?from_block_height={start_block}&to_block_height={end_block}"
+
+        # Make the GET request
+        response = requests.get(url, headers=headers)
+
+        # Raise an HTTPError if the response was unsuccessful
+        response.raise_for_status()
+
+        # Parse the JSON response
+        data = response.json().get("data", [])
+        for action in data:
+            if action.get("ft_action_type_id") == 2:
+                return 1  # Participated
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error checking voting participation for {public_key}: {e}")
+
+    return 0  # Did not participate
+
 def filter_out_validators(validators):
     print("Filtering out ineligible validators...")
     eligible_validators = [
@@ -130,6 +164,10 @@ def fetch_validators(last_era_id):
                 performances = fetch_validator_performance(validator["public_key"], eras_to_check, auth_key)
                 is_3_months_old = all(performances.get(era, 0) > 0 for era in eras_to_check)
                 validator["is_3_months_old"] = is_3_months_old
+
+                # Check voting participation
+                participation = check_voting_participation(validator["public_key"], auth_key)
+                validator["voting_participation"] = participation
 
                 validators.append(validator)
                 if idx % 10 == 0:
