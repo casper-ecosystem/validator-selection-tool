@@ -110,6 +110,7 @@ def filter_out_validators(validators):
         and 1 <= v.get("fee", 0) <= 10
         and v.get("rank", float('inf')) > 10
         and v.get("delegators_number", float('-inf')) < 1200
+        and v.get("onchain_voting_participation", 0) >= 0.5
     ]
     print(f"Filtered out {len(validators) - len(eligible_validators)} ineligible validators.")
     return eligible_validators
