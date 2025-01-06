@@ -121,6 +121,22 @@ def fetch_validators(last_era_id):
         print("Error: CSPR_CLOUD_KEY environment variable is not set.")
         return
 
+    # Define voting details as a list of dictionaries
+    voting_details = [
+        {
+            "contract_package_hash": "f64d28df7fc354af183829bad6006525f88d37f0d982ba6125d58ddfa521e0fa",
+            "start_block": 3798134,
+            "end_block": 3808400,
+            "column_name": "voting_participation_001"
+        },
+        {
+            "contract_package_hash": "5743998e54844ae3587bf1c80c83695a767ab568f149be87db15216b57a20831",
+            "start_block": 3991820,
+            "end_block": 4012820,
+            "column_name": "voting_participation_002"
+        }
+    ]
+
     # API endpoint for validators
     base_url = "https://api.cspr.cloud/validators"
 
@@ -161,19 +177,14 @@ def fetch_validators(last_era_id):
                 is_3_months_old = all(performances.get(era, 0) > 0 for era in eras_to_check)
                 validator["is_3_months_old"] = is_3_months_old
 
-                # Check voting participation for the two votes
-                participation_001 = check_voting_participation(
-                    validator["public_key"], auth_key,
-                    "f64d28df7fc354af183829bad6006525f88d37f0d982ba6125d58ddfa521e0fa",
-                    3798134, 3808400
-                )
-                participation_002 = check_voting_participation(
-                    validator["public_key"], auth_key,
-                    "5743998e54844ae3587bf1c80c83695a767ab568f149be87db15216b57a20831",
-                    3991820, 4012820
-                )
-                validator["voting_participation_001"] = participation_001
-                validator["voting_participation_002"] = participation_002
+                # Check voting participation for each vote
+                for vote in voting_details:
+                    participation = check_voting_participation(
+                        validator["public_key"], auth_key,
+                        vote["contract_package_hash"],
+                        vote["start_block"], vote["end_block"]
+                    )
+                    validator[vote["column_name"]] = participation
 
                 validators.append(validator)
                 if idx % 10 == 0:
@@ -185,7 +196,7 @@ def fetch_validators(last_era_id):
 
             page += 1
 
-        # Output the validators list as a CSV file
+        # Output the validators list as a single CSV file
         csv_file_name = f"era_{last_era_id}_validators.csv"
         print("Saving validators to CSV...")
 
