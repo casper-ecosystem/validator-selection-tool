@@ -14,7 +14,7 @@ This repository contains a Python script designed to assist in the transparent a
 
 - Python 3.7+
 - `requests` library
-- API Key for the CSPR.cloud API, stored in the `CSPR_CLOUD_KEY` environment variable
+- API Key for the CSPR.cloud API, stored in the `CSPR_CLOUD_KEY` environment variable (API keys can be generated for free on the [CSPR.build console](https://console.cspr.build/))
 
 ## Installation
 
@@ -69,5 +69,4 @@ Contributions are welcome! If you have ideas for improvements or new features, f
 ## Disclaimer
 
 This tool is provided as-is and is designed to assist with validator selection. Users are responsible for ensuring compliance with their specific requirements and regulations.
-
 
