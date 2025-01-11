@@ -153,7 +153,7 @@ def fetch_validators(last_era_id):
     try:
         while True:
             # Add pagination to the request
-            includes_param = "account_info{url,is_active},average_performance"
+            includes_param = "account_info{url,is_active},average_performance,network_share"
             url = f"{base_url}?era_id={last_era_id}&page={page}&includes={includes_param}"
 
             # Make the GET request
@@ -180,17 +180,25 @@ def fetch_validators(last_era_id):
 
                 # Check voting participation for each vote
                 total_participation = 0
-                for vote in voting_details:
-                    participation = check_voting_participation(
-                        validator["public_key"], auth_key,
-                        vote["contract_package_hash"],
-                        vote["start_block"], vote["end_block"]
-                    )
-                    validator[vote["column_name"]] = participation
-                    total_participation += participation
 
-                # Calculate onchain voting participation as average
-                validator["onchain_voting_participation"] = round(total_participation / len(voting_details), 2)
+                if float(validator.get("network_share", 1)) < 0.01:  # Treat near-zero values as zero
+                    for vote in voting_details:
+                        validator[vote["column_name"]] = 1  # Consider voted because they do not have voting tokens due to low weight
+                        total_participation += 1
+                    # Set onchain_voting_participation to 1
+                    validator["onchain_voting_participation"] = 1.0
+                else:
+                    for vote in voting_details:
+                        participation = check_voting_participation(
+                            validator["public_key"], auth_key,
+                            vote["contract_package_hash"],
+                            vote["start_block"], vote["end_block"]
+                        )
+                        validator[vote["column_name"]] = participation
+                        total_participation += participation
+
+                    # Calculate onchain voting participation as average
+                    validator["onchain_voting_participation"] = round(total_participation / len(voting_details), 2)
 
                 validators.append(validator)
                 if idx % 10 == 0:
@@ -246,4 +254,5 @@ if __name__ == "__main__":
         if current_era_id is not None:
             last_era_id = current_era_id - 1
             fetch_validators(last_era_id)
+
 
