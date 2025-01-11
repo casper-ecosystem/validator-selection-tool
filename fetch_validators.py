@@ -169,6 +169,12 @@ def fetch_validators(last_era_id):
                 account_info = validator.get("account_info")
                 validator["account_info_url"] = account_info.get("url", "") if account_info else ""
                 validator["account_info_active"] = account_info.get("is_active", False) if account_info else False
+
+                # Exception for specific public key due to inconsistency in the API response. Issue reported.
+                # TODO: Remove the exception when the API is fixed.
+                if validator.get("public_key") == "01faa681d910a8ac877b81537d75db42395b9da0da1a3457d223151305f803da0e":
+                    validator["account_info_active"] = True
+
                 average_performance = validator.get("average_performance")
                 validator["average_performance"] = round(average_performance.get("score", 0.0), 1) if average_performance else 0
 
@@ -254,5 +260,4 @@ if __name__ == "__main__":
         if current_era_id is not None:
             last_era_id = current_era_id - 1
             fetch_validators(last_era_id)
-
 
