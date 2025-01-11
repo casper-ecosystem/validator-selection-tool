@@ -58,6 +58,10 @@ The script uses a set of predefined criteria to filter validators. These include
 
 You can modify these criteria in the `filter_out_validators` function to suit your requirements.
 
+## Casper Association Delegation Policy
+
+This tool aligns with the [Casper Association Delegation Policy](https://forum.casper.network/t/cvv002-casper-association-delegation-policy/1220), which was accepted by Mainnet validators through an on-chain governance vote. The policy ensures a systematic and transparent delegation process to enhance network decentralization and incentivize optimal validator performance.
+
 ## License
 
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
