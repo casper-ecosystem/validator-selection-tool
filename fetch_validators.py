@@ -81,7 +81,11 @@ def check_voting_participation(public_key, auth_key, contract_package_hash, star
     }
 
     try:
-        url = f"{base_url}?from_block_height={start_block}&to_block_height={end_block}"
+        # Add the contract_package_hash to the query
+        url = (
+            f"{base_url}?from_block_height={start_block}"
+            f"&to_block_height={end_block}&contract_package_hash={contract_package_hash}"
+        )
 
         # Make the GET request
         response = requests.get(url, headers=headers)
@@ -99,6 +103,7 @@ def check_voting_participation(public_key, auth_key, contract_package_hash, star
         print(f"Error checking voting participation for {public_key}: {e}")
 
     return 0  # Did not participate
+
 
 def filter_out_validators(validators):
     print("Filtering out ineligible validators...")
