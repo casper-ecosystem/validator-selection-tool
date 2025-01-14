@@ -21,7 +21,7 @@ This repository contains a Python script designed to assist in the transparent a
 1. Clone the repository:
    ```bash
    git clone https://github.com/casper-ecosystem/validator-selection-tool.git
-   cd casper-validator-selection-tool
+   cd validator-selection-tool
    ```
 
 2. Install the required dependencies:
