@@ -3,8 +3,8 @@ import requests
 import csv
 import time
 
-# Adjustable rate limit
-RATE_LIMIT = 100  # Requests per minute
+# Adjustable rate limit via environment variable (default: 100 requests per minute)
+RATE_LIMIT = int(os.getenv("API_RATE_LIMIT", 100))  # Default: 100
 RATE_PERIOD = 60  # Seconds
 REQUEST_INTERVAL = RATE_PERIOD / RATE_LIMIT  # Time delay between requests
 

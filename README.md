@@ -58,6 +58,20 @@ The script uses a set of predefined criteria to filter validators. These include
 
 You can modify these criteria in the `filter_out_validators` function to suit your requirements.
 
+### API Rate Limiting
+
+The script enforces a rate limit on API requests to prevent exceeding the CSPR.cloud API restrictions.
+
+By default, the script allows **100 requests per minute**, but this can be adjusted by setting the `API_RATE_LIMIT` environment variable.
+
+To change the rate limit, use:
+
+```bash
+export API_RATE_LIMIT=200  # Adjusts the limit to 200 requests per minute
+```
+
+This ensures compliance with different API tiers (e.g., Free vs. Pro plan).
+
 ## Casper Association Delegation Policy
 
 This tool aligns with the [Casper Association Delegation Policy](https://forum.casper.network/t/cvv002-casper-association-delegation-policy/1220), which was accepted by Mainnet validators through an on-chain governance vote. The policy ensures a systematic and transparent delegation process to enhance network decentralization and incentivize optimal validator performance.
