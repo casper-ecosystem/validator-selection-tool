@@ -143,6 +143,12 @@ def fetch_validators(last_era_id):
             "start_block": 3991820,
             "end_block": 4012820,
             "column_name": "voting_participation_002"
+        },
+        {
+            "contract_package_hash": "6c8d2ae7de3367a600a9fb33c1e3cdbe00d8bda7e17360b81f99e32c5b2ff39f",
+            "start_block": 4222300,
+            "end_block": 4239400,
+            "column_name": "voting_participation_003"
         }
     ]
 
