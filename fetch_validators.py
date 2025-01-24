@@ -3,6 +3,18 @@ import requests
 import csv
 import time
 
+# Adjustable rate limit via environment variable (default: 100 requests per minute)
+RATE_LIMIT = int(os.getenv("API_RATE_LIMIT", 100))  # Default: 100
+RATE_PERIOD = 60  # Seconds
+REQUEST_INTERVAL = RATE_PERIOD / RATE_LIMIT  # Time delay between requests
+
+def rate_limited_request(url, headers):
+    """Wrapper function to enforce rate limiting on API requests."""
+    time.sleep(REQUEST_INTERVAL)  # Enforce delay
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()  # Raise error if request fails
+    return response
+
 def fetch_auction_metrics():
     # Get the authorization key from the environment variable
     auth_key = os.getenv("CSPR_CLOUD_KEY")
@@ -22,10 +34,7 @@ def fetch_auction_metrics():
     try:
         print("Fetching auction metrics...")
         # Make the GET request
-        response = requests.get(url, headers=headers)
-
-        # Raise an HTTPError if the response was unsuccessful
-        response.raise_for_status()
+        response = rate_limited_request(url, headers)
 
         # Parse the JSON response
         data = response.json().get("data", {})
@@ -55,10 +64,7 @@ def fetch_validator_performance(public_key, eras, auth_key):
         url = f"{base_url}?era_id={era_param}&page=1"
 
         # Make the GET request
-        response = requests.get(url, headers=headers)
-
-        # Raise an HTTPError if the response was unsuccessful
-        response.raise_for_status()
+        response = rate_limited_request(url, headers)
 
         # Parse the JSON response
         data = response.json().get("data", [])
@@ -88,10 +94,7 @@ def check_voting_participation(public_key, auth_key, contract_package_hash, star
         )
 
         # Make the GET request
-        response = requests.get(url, headers=headers)
-
-        # Raise an HTTPError if the response was unsuccessful
-        response.raise_for_status()
+        response = rate_limited_request(url, headers)
 
         # Parse the JSON response
         data = response.json().get("data", [])
@@ -140,6 +143,12 @@ def fetch_validators(last_era_id):
             "start_block": 3991820,
             "end_block": 4012820,
             "column_name": "voting_participation_002"
+        },
+        {
+            "contract_package_hash": "6c8d2ae7de3367a600a9fb33c1e3cdbe00d8bda7e17360b81f99e32c5b2ff39f",
+            "start_block": 4222300,
+            "end_block": 4239400,
+            "column_name": "voting_participation_003"
         }
     ]
 
@@ -162,10 +171,7 @@ def fetch_validators(last_era_id):
             url = f"{base_url}?era_id={last_era_id}&page={page}&includes={includes_param}"
 
             # Make the GET request
-            response = requests.get(url, headers=headers)
-
-            # Raise an HTTPError if the response was unsuccessful
-            response.raise_for_status()
+            response = rate_limited_request(url, headers)
 
             # Parse the JSON response
             data = response.json()
