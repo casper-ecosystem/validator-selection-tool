@@ -149,6 +149,24 @@ def fetch_validators(last_era_id):
             "start_block": 4222300,
             "end_block": 4239400,
             "column_name": "voting_participation_003"
+        },
+        {
+            "contract_package_hash": "ee46693b305ce303440a766372219cec45e5f65b36c96dee5bc0cf81a40c6d19",
+            "start_block": 5210482,
+            "end_block": 5226682,
+            "column_name": "voting_participation_004"
+        },
+        {
+            "contract_package_hash": "bab80b560cd420bd66b578c3967f3508455e2e752e475ce405d796ad4af774d3",
+            "start_block": 5500490,
+            "end_block": 5516690,
+            "column_name": "voting_participation_005"
+        },
+        {
+            "contract_package_hash": "ff0348ac932241e4a84e28fceedcb07c3d103916798e33f050a238297b205a25",
+            "start_block": 5503579,
+            "end_block": 5519779,
+            "column_name": "voting_participation_006"
         }
     ]
 
