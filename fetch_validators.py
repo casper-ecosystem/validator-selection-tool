@@ -179,6 +179,12 @@ def fetch_validators(last_era_id):
             "start_block": 6743060,
             "end_block": 6764660,
             "column_name": "voting_participation_008"
+        },
+        {
+            "contract_package_hash": "a77b00fb86e73b9c5ff8ca4c1b80fd4adcfe72499462e99bb212f29b631f25d2",
+            "start_block": 7121301,
+            "end_block": 7142901,
+            "column_name": "voting_participation_009"
         }
     ]
 
