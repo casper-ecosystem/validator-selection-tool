@@ -116,7 +116,7 @@ def filter_out_validators(validators):
         and v.get("average_performance", 0) >= 98.0
         and v.get("account_info_active", False)
         and 1 <= v.get("fee", 0) <= 10
-        and v.get("rank", float('inf')) > 10
+        #and v.get("rank", float('inf')) > 10
         and v.get("delegators_number", float('-inf')) < 1200
         and v.get("onchain_voting_participation", 0) >= 0.5
     ]
@@ -185,6 +185,12 @@ def fetch_validators(last_era_id):
             "start_block": 7121301,
             "end_block": 7142901,
             "column_name": "voting_participation_009"
+        },
+        {
+            "contract_package_hash": "82b5d3d175c6726aac0c6fc26f7592a1e505522fec3146612e415cc78f584b85",
+            "start_block": 8050811,
+            "end_block": 8072411,
+            "column_name": "voting_participation_010"
         }
     ]
 
